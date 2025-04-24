@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Email Verification</title>
+    <style>
+      .container {
+        background-color: lightblue;
+        color: black;
+        padding: 10px;
+        width: 100%;
+        min-height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p>Hello<strong><%= name %></strong></p>
+      <p>
+        We are happy to on board you. Please contribute in our smart city
+        mission
+      </p>
+      <p>If you have any query ten let us know. we are happy to help you</p>
+      <p>Regards</p>
+      <strong>Smart City Team</strong>
+      <p>Click the link below to verify your email address:</p>
+      <p><a href="<%= verificationLink %>">Verify Email</a></p>
+      <p>This link will expire in 24 hours.</p>
+    </div>
+  </body>
+</html>
