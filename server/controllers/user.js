@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+const serverUrl = process.env.serverUrl;
 export const registerUser = async (req, res) => {
   try {
     const { fullName, email, password, role } = req.body;
