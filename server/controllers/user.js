@@ -97,8 +97,8 @@ export const loginUser = async (req, res) => {
     // Set token in cookies
     res.cookie("userToken", token, {
       httpOnly: true,
-      secure: false, // true only for HTTPS
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // ensures true in Render
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ensures cross-origin cookie
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
