@@ -6,6 +6,7 @@ import ejs from "ejs";
 import { fileURLToPath } from "url";
 import cloudinary from "../utils/cloudinary.js";
 import fs from "fs";
+import bcrypt from "bcrypt";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const serverUrl = process.env.serverUrl;
@@ -16,18 +17,20 @@ export const registerUser = async (req, res) => {
     let profilePicUrl = "";
 
     if (req.file) {
-      // Upload to Cloudinary
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "grievease_users",
       });
       profilePicUrl = result.secure_url;
-
-      // Delete temp file
       fs.unlinkSync(req.file.path);
     }
 
+    // 👇 Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
     const newUser = new User({
       ...req.body,
+      password: hashedPassword,
       profilePic: profilePicUrl,
     });
 
@@ -48,13 +51,18 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user by email
     const user = await User.findOne({ email });
-    if (!user || user.password !== password) {
+    if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Generate JWT token
+    // 👇 Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // JWT Token
     const token = jwt.sign(
       {
         id: user._id,
@@ -69,8 +77,8 @@ export const loginUser = async (req, res) => {
     // Set token in cookies
     res.cookie("userToken", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ensures true in Render
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ensures cross-origin cookie
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

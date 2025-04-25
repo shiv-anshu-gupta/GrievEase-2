@@ -47,20 +47,15 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-6 items-center text-gray-700 font-medium">
-          <a href="#" className="hover:text-blue-600 transition">
+          <a href="/" className="hover:text-blue-600 transition">
             Home
           </a>
           <a href="#how-it-works" className="hover:text-blue-600 transition">
             How It Works
           </a>
-          <a href="#features" className="hover:text-blue-600 transition">
-            Features
-          </a>
+
           <a href="/complaintsPage" className="hover:text-blue-600 transition">
             Contribute
-          </a>
-          <a href="#contact" className="hover:text-blue-600 transition">
-            Contact
           </a>
 
           {/* Conditional Render for User Name or Login/Register */}
