@@ -120,15 +120,17 @@ export const loginUser = async (req, res) => {
 
 export const logoutUser = (req, res) => {
   try {
+    console.log("Logging out user. Current cookies:", req.cookies);
+
     res.clearCookie("userToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
 
     res.status(200).json({ message: "Logout successful" });
   } catch (err) {
-    console.error(err);
+    console.error("Logout error:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
