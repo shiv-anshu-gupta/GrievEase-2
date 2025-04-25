@@ -26,6 +26,7 @@ const ProfilePage = () => {
         }
 
         const data = await res.json();
+        console.log("Profile data:", data); // Log the response here
         setUser(data.user);
         setEditableFields({
           username: data.user.username || "",
