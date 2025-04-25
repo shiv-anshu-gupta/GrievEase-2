@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext"; // Import AuthContext
 import { logoutUser } from "@/api/auth/userConfig";
 import { Link } from "react-router-dom";
+import { logoutUser } from "../api/auth/userConfig";
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout, loading } = useContext(AuthContext); // Access user and loading from context
+  const { user, loading } = useContext(AuthContext); // Access user and loading from context
   console.log("User in Navbar:", user); // Debugging line to check user state
   const [isOpen, setIsOpen] = useState(false);
 
