@@ -42,8 +42,7 @@ build/
 *.njsproj
 *.sln
 
-# Local uploads
-public/uploads/
+
 
 # Misc
 *.tgz
