@@ -6,7 +6,7 @@ const containerStyle = {
   width: "100%",
   height: "400px",
 };
-
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 const LocationMap = ({ latitude, longitude, onLocationChange }) => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
