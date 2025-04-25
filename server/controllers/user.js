@@ -4,71 +4,43 @@ import { sendVerificationEmail } from "../utils/sendVerificationEmail.js";
 import path from "path";
 import ejs from "ejs";
 import { fileURLToPath } from "url";
+import cloudinary from "../utils/cloudinary.js";
+import fs from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const serverUrl = process.env.serverUrl;
 const frontendUrl = process.env.frontendUrl;
+
 export const registerUser = async (req, res) => {
   try {
-    const { fullName, email, password, role } = req.body;
+    let profilePicUrl = "";
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
+    if (req.file) {
+      // Upload to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "grievease_users",
+      });
+      profilePicUrl = result.secure_url;
+
+      // Delete temp file
+      fs.unlinkSync(req.file.path);
     }
 
-    // Normalize file path if file exists
-    const profilePicPath = req.file
-      ? path.join("/uploads", req.file.filename).replace(/\\/g, "/")
-      : "";
-
-    // Create new user
     const newUser = new User({
-      fullName,
-      email,
-      password,
-      role,
-      profilePic: profilePicPath,
+      ...req.body,
+      profilePic: profilePicUrl,
     });
 
-    // Save user to DB
     await newUser.save();
 
-    // Create JWT token for verification
-    const token = jwt.sign(
-      { id: newUser._id, email: newUser.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    newUser.verifyToken = token;
-    await newUser.save(); // Save again with token
-
-    // Prepare email verification link
-    const verificationLink = `${serverUrl}/api/users/verify-email?token=${token}`;
-
-    // Render email template
-    const templatePath = path.join(__dirname, "../views/verifyEmail.ejs");
-    const emailBody = await ejs.renderFile(templatePath, {
-      name: fullName,
-      verificationLink,
-    });
-
-    // Send verification email
-    await sendVerificationEmail(
-      newUser.email,
-      "Verify Your Email - GrievEase",
-      emailBody
-    );
-
     res.status(201).json({
-      message:
-        "User registered successfully. Please check your email to verify your account.",
+      success: true,
+      message: "User registered successfully",
+      user: newUser,
     });
-  } catch (err) {
-    console.error("Registration error:", err);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error) {
+    console.error("Register error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 

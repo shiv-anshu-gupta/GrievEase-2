@@ -112,11 +112,7 @@ const ProfilePage = () => {
         {/* Left - Profile Pic and Basic Info */}
         <div className="flex flex-col items-center sm:items-start sm:w-1/3 gap-4">
           <img
-            src={
-              user.profilePic
-                ? `${serverUrl}${user.profilePic}`
-                : "/default-avatar.png"
-            }
+            src={user.profilePic ? `${user.profilePic}` : "/default-avatar.png"}
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover border-4 border-blue-200 shadow"
           />

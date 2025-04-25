@@ -29,7 +29,7 @@ const ComplaintCardGrid = ({
             >
               {complaint.image && (
                 <img
-                  src={`${serverUrl}${complaint.image}`}
+                  src={`${complaint.image}`}
                   alt={complaint.title}
                   className="w-full h-48 object-cover rounded-xl mb-3"
                 />

@@ -1,5 +1,6 @@
+import cloudinary from "../utils/cloudinary.js";
+import fs from "fs";
 import Complaint from "../models/complaint.model.js";
-
 // Create a new complaint
 export const createComplaint = async (req, res) => {
   try {
@@ -14,7 +15,19 @@ export const createComplaint = async (req, res) => {
       address,
     } = req.body;
 
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : "";
+    let imageUrl = "";
+
+    // Upload to Cloudinary if image exists
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "grievease_complaints",
+      });
+
+      imageUrl = result.secure_url;
+
+      // Optional: delete local file after upload
+      fs.unlinkSync(req.file.path);
+    }
 
     const complaint = new Complaint({
       title,
@@ -92,6 +105,7 @@ export const unlikeComplaint = async (req, res) => {
   }
 };
 
+// My complaints
 export const myComplaints = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -106,6 +120,7 @@ export const myComplaints = async (req, res) => {
   }
 };
 
+// Get pending complaints
 export const getPendingComplaints = async (req, res) => {
   try {
     const pendingComplaints = await Complaint.find({
@@ -126,23 +141,21 @@ export const getPendingComplaints = async (req, res) => {
   }
 };
 
+// Accept complaint
 export const acceptComplaint = async (req, res) => {
-  const { complaintId } = req.params; // Get the complaintId from the request params
-  const officerId = req.user.id; // Assuming you are using middleware to get the officer's ID from the authenticated user
+  const { complaintId } = req.params;
+  const officerId = req.user.id;
 
   try {
-    // Find the complaint by ID
     const complaint = await Complaint.findById(complaintId);
 
     if (!complaint) {
       return res.status(404).json({ message: "Complaint not found" });
     }
 
-    // Update complaint's status and officerId
     complaint.status = "In Progress";
     complaint.officerId = officerId;
 
-    // Save the updated complaint
     await complaint.save();
 
     res
@@ -154,6 +167,7 @@ export const acceptComplaint = async (req, res) => {
   }
 };
 
+// Get assigned complaints
 export const getAssignedComplaints = async (req, res) => {
   try {
     const officerId = req.user.id;
