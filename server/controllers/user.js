@@ -4,10 +4,10 @@ import { sendVerificationEmail } from "../utils/sendVerificationEmail.js";
 import path from "path";
 import ejs from "ejs";
 import { fileURLToPath } from "url";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const serverUrl = process.env.serverUrl;
+const frontendUrl = process.env.frontendUrl;
 export const registerUser = async (req, res) => {
   try {
     const { fullName, email, password, role } = req.body;
@@ -151,7 +151,7 @@ export const verifyEmail = async (req, res) => {
     user.status = "verified";
     await user.save();
 
-    res.send("Email verification successful. You can now login.");
+    res.redirect(`${frontendUrl}`);
   } catch (err) {
     console.error(err);
     res.status(400).send("Invalid or expired token");

@@ -92,7 +92,10 @@ const Navbar = () => {
               >
                 Login
               </button>
-              <button className="border border-blue-600 text-blue-600 px-4 py-1.5 rounded-md hover:bg-blue-600 hover:text-white transition">
+              <button
+                className="border border-blue-600 text-blue-600 px-4 py-1.5 rounded-md hover:bg-blue-600 hover:text-white transition"
+                onClick={() => navigate("/register")}
+              >
                 Register
               </button>
             </>

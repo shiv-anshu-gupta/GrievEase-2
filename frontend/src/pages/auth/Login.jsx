@@ -31,8 +31,8 @@ const LoginPage = () => {
       if (res.ok) {
         setUser(data.user); // set user in context
         data.user.role === "citizen"
-          ? navigate("/dashboard")
-          : navigate("/officer");
+          ? navigate("/dashboard/profile")
+          : navigate("/officer/profile");
       } else {
         setErrorMsg(data.message || "Login failed");
       }
