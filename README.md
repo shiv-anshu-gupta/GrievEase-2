@@ -47,15 +47,65 @@ cd GrievEase
 The Google Maps API integration allows users to pinpoint their complaint's exact location when submitting it.
 
 Don't forget to add your Google Maps API key in the .env file for this feature to work.
-📡 API Endpoints
-POST /api/complaint/submit
-Submit a new complaint with details like category, description, and location.
+# 📄 API Documentation – GrievEase Backend
 
-GET /api/complaint/all
-Fetch all complaints, public and private.
+## 🛡️ Authentication APIs
 
-POST /api/complaint/{id}/accept
-Officers can accept a complaint and begin the resolution process.
+| Method | Route                      | Description                              | Protection |
+|:------:|:---------------------------|:-----------------------------------------|:----------:|
+| POST   | `/register`                 | Register a new user (with profile pic)    | Public     |
+| POST   | `/login`                    | Login user                               | Public     |
+| GET    | `/verify-user`              | Verify user token and get user data       | Protected  |
+| POST   | `/logout`                   | Logout user                              | Protected  |
+| GET    | `/`                         | Welcome route (simple message)           | Public     |
+| GET    | `/verify-email`             | Verify email using token                 | Public     |
+| GET    | `/profile`                  | Get user profile                         | Protected  |
+| PUT    | `/update`                   | Update user profile                      | Protected  |
+| GET    | `/resend-verification`      | Resend email verification link           | Protected  |
+
+---
+
+## 📢 Complaint APIs
+
+| Method | Route                          | Description                              | Protection |
+|:------:|:-------------------------------|:-----------------------------------------|:----------:|
+| POST   | `/submit`                      | Submit a new complaint (with image)      | Protected  |
+| GET    | `/all`                         | Get all complaints                       | Public     |
+| POST   | `/:id/like`                    | Like a complaint                         | Public     |
+| POST   | `/:id/unlike`                  | Unlike a complaint                       | Public     |
+| GET    | `/pending`                     | Get pending complaints                   | Protected  |
+| PATCH  | `/:complaintId/accept`          | Officer accepts assigned complaint       | Protected  |
+| GET    | `/my`                          | Get complaints submitted by the user     | Protected  |
+| GET    | `/assigned`                    | Get complaints assigned to officer       | Protected  |
+
+---
+
+## 📍 Location APIs (Google Maps Integration)
+
+| Method | Route             | Description                               | Protection |
+|:------:|:------------------|:------------------------------------------|:----------:|
+| GET    | `/autocomplete`    | Get location suggestions (autocomplete)  | Public     |
+
+---
+
+## 📝 Notes
+
+- **Protected Routes** require a valid authentication token (JWT) in the headers.
+- **Image Uploads** must be sent as `multipart/form-data`.
+- **Google Maps API** is required for the `/autocomplete` route (env variable: `GOOGLE_MAPS_API_KEY`).
+- Error handling is done with proper status codes and messages.
+
+---
+
+# 🛠️ Tech Stack
+
+- Node.js
+- Express.js
+- MongoDB with Mongoose
+- JWT Authentication
+- Google Maps API
+- Cloudinary / Local storage (for images)
+
 
 🔐 Security
 JWT Authentication is used for secure user login and accessing protected routes.
